@@ -18,3 +18,6 @@ Predicts how much tip to pay give taxrate and price
 
 ## UCSD_Podcast_Downloader.py
 Script used to download all of a class's podcasts from https://podcast.ucsd.edu 
+
+## Boston_Foot_Traffic_Scraper.py
+Scrape all the files from the City of Boston Database via Webdriver 
