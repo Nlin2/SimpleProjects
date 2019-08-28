@@ -24,3 +24,6 @@ Scrape all the files from the City of Boston Database via Webdriver
 
 ## bar.html, line.html, wordCloud.html, pie.html
 Interactive graphs created with D3.js 
+
+## UCSDPD_Crime_Log_Scraper.py
+Scrapes all pdf's available in the following link http://www.police.ucsd.edu/docs/reports/CallsandArrests/Calls_and_Arrests.asp
