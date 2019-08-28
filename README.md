@@ -21,3 +21,6 @@ Script used to download all of a class's podcasts from https://podcast.ucsd.edu
 
 ## Boston_Foot_Traffic_Scraper.py
 Scrape all the files from the City of Boston Database via Webdriver 
+
+## bar.html, line.html, wordCloud.html, pie.html
+Interactive graphs created with D3.js 
