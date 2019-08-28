@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>line chart</title>
+  <script src="http://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+  <style>
+        .line {
+            fill: none;
+            stroke: #2C82BE;
+            stroke-width: 1.5;
+        }
+        .dot {
+            fill: #2C82BE;
+            stroke: #FFFFFF;
+            stroke-width: 2;
+        }
+    </style>
+
+</head>
+<body>
+<script type="text/javascript">
+
+const HEIGHT = 302;
+const WIDTH = 1000;
+
+var svg = d3.select("body")
+    .append("svg")
+        .attr("width", WIDTH)
+        .attr("height", HEIGHT)
+    .append("g")
+
+// Data comes in a few forms
+// 1. data.length == 7
+// 2. data.length == 30
+// 3. Other
+var data = [
+    {"Date": "2/28/2019", "Name": "Signature Bing", "Views/Orders": 9},
+    {"Date": "3/1/2019", "Name": "Signature Bing", "Views/Orders": 3},
+    {"Date": "3/2/2019", "Name": "Signature Bing", "Views/Orders": 2},
+    {"Date": "3/3/2019", "Name": "Signature Bing", "Views/Orders": 5},
+    {"Date": "3/4/2019", "Name": "Signature Bing", "Views/Orders": 6},
+    {"Date": "3/5/2019", "Name": "Signature Bing", "Views/Orders": 0}
+]
+data.forEach(d => {
+    d.Date = Date.parse(d.Date);
+    return d;
+});
+
+// create a tooltip
+var tooltip = d3.select("body").append("div")
+    .append("g")
+        .attr("class", "tooltip")
+        .style("position", "absolute")
+        .style("visibility", "hidden")
+        .style("background", "#1A1A1A")
+        .style("border-radius", "4px")
+        .style("font-family", "Arial")
+        .style("padding", "10px")
+        .style("font-size", "12px")
+        .style("color", "white")
+        .style("text-align", "center")
+
+// Y axis
+const yScale = d3.scaleLinear()
+    .range([246, 0])
+    .domain([0, 1 + d3.max(data.map(d=>d["Views/Orders"]))]);
+svg.append('g')
+    .call(
+        d3.axisLeft(yScale)
+            .ticks(6)
+            .tickSize(-WIDTH + 1) // Grid
+            .tickPadding(16)
+    )
+    .attr("transform", `translate(${76}, 0)`)
+    .call(g => g.select(".domain").remove()) // axis border
+    .call(g => g.selectAll(".tick line") // grid
+        .attr("color",  "#DADADA")
+        .attr("stroke-dasharray", "5,5")
+    );
+svg.append('text') // label
+    .attr('transform', 'rotate(-90) translate(-123, 10)')
+    .attr('text-anchor', 'middle')
+    .attr("font-family", "Arial")
+    .attr("font-size", "14")
+    .text('Views / Orders')
+
+// x axis
+const xScale = d3.scaleTime()
+    .range([0, WIDTH - 100])
+    .domain(d3.extent(data, (d) => d.Date));
+
+svg.append('g')
+    .attr('transform', `translate(${67}, ${246})`)
+    .call(
+        d3.axisBottom(xScale)
+            .tickPadding(16)
+            .tickFormat(d3.timeFormat("%-m/%-d"))
+            .tickValues(data.map(d => d.Date))
+    )
+    .call(g => g.select(".domain") // path line
+            .attr("color", "#DADADA")
+            .attr("stroke-width", "2px")
+    )
+    .call(g => g.selectAll(".tick line")
+        .attr("color",  "#DADADA")
+    )
+
+// Line
+var line = d3.line()
+    .x(function(d) { return xScale(d["Date"]) - 8; }) // set the x values for the line generator
+    .y(function(d) { return yScale(d["Views/Orders"]); }) // set the y values for the line generator
+
+svg.select("g").append("path")
+    .data([data]) 
+    .attr("fill", "none")  
+    .attr("stroke", "#2C82BE")  
+    .attr("stroke-width", "1.5") 
+    .attr("d", line) 
+svg.select("g").selectAll(".dot")
+    .data(data)
+    .enter().append("circle") 
+        .attr("class", "dot") 
+        .attr("cx", function(d, i) { return xScale(d["Date"]) - 8; })
+        .attr("cy", function(d) { return yScale(d["Views/Orders"]); })
+        .attr("r", 5)
+        .on("mouseover", handleMouseOver)
+        .on("mousemove", handleMouseMove)
+        .on("mouseout", handleMouseOut)
+
+function handleMouseOver(d) {
+     tooltip.style("visibility", "visible");
+ }
+ function handleMouseMove(d) {
+     var day = new Date(d.Date)
+     day = day.toLocaleDateString("en-US", {month: "numeric", day: "numeric"})
+     tooltip
+        .style("left", (d3.event.pageX) + "px")
+        .style("top", (d3.event.pageY - 28) + "px")
+        .text(`${day}: ${d["Views/Orders"]} Views`);
+}
+//.toLocaleDateString("en-US", {month: "numeric", day: "numeric"})
+function handleMouseOut(d) {
+    tooltip.style("visibility", "hidden")
+}
+
+</script>
+</body>
+</html>

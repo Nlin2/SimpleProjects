@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+  <style>
+    .tooltip {
+      background: #1A1A1A;
+      border-radius: 4px;
+      font-family: Arial;
+      padding: 10px;
+      font-size: 12px;
+      color: white;
+      text-align: center;
+    }
+
+    .center-top-text {
+      margin: 0 auto;
+      font-family: Arial;
+      font-weight: bold;
+      font-size: 14px;
+      text-align: center;
+      fill: #AAAAAA;
+    }
+    .center-bot-text {
+      margin: 0 auto;
+      width: 60px;
+      height: 43px;
+      font-family: Arial;
+      font-size: 36px;
+      line-height: 43px;
+      text-align: center;
+      color: #1A1A1A;
+    }
+  </style>
+</head>
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v5.js"></script>
+
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
+<script>
+// set the dimensions and margins of the graph
+const WIDTH = 210;
+const HEIGHT = 210;
+
+const RADIUS = HEIGHT / 2;
+const COLOR = []
+
+// append the svg object to the div called 'my_dataviz'
+var svg = d3.select("#my_dataviz")
+  .append("svg")
+  .attr("width", 356)
+  .attr("height", 410)
+  .append("g")
+  .attr("transform", `translate(${RADIUS + 1127 - 1054}, ${RADIUS + 760 - 710})`);
+// create a tooltip
+var tooltip = d3.select("#my_dataviz")
+  .append("div")
+    .style("position", "absolute")
+    .style("visibility", "hidden")
+    .attr("class", "tooltip");
+  
+// Insert data here
+var data = {"New Customers": 38, "Returning Customers": 128};
+
+// set the color scale
+var color = d3.scaleOrdinal()
+  .domain(data)
+  .range(["#54D270", "#2C82BE", "#F06666"]);
+
+// Compute the position of each group on the pie:
+var pie = d3.pie()
+  .value((d) => d.value);
+var data_ready = pie(d3.entries(data));
+
+// Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+svg
+  .selectAll()
+  .data(data_ready)
+  .enter()
+  .append('path')
+  .attr('d', d3.arc()
+    .innerRadius(RADIUS - 20)
+    .outerRadius(RADIUS)
+  )  
+  .attr('fill', d => color(d.data.key))
+  .on("mouseover", handleMouseOver)
+  .on("mouseout", handleMouseOut);
+
+var topText = d3.select("g")
+  .append("text")
+  .text("Total")
+  .attr("class", "center-top-text")
+  .attr("text-anchor", "middle")
+  .attr("y", -20);
+
+var botText = d3.select("g")
+  .append("text")
+  .text(Object.values(data).reduce((a, b) => a + b)) // sum of values - total
+  .attr("class", "center-bot-text")
+  .attr("text-anchor", "middle")
+  .attr("y", 20);
+
+function handleMouseOver(d, i) {
+  d3.select(this)
+    .attr('d', d3.arc()
+      .innerRadius(RADIUS - 20)
+      .outerRadius(RADIUS + 5)
+    );
+  tooltip
+    .text(d.data.key + ": " + d.data.value)
+    .style("visibility", "visible")
+    .style("left", (d3.event.pageX) + "px")		
+    .style("top", (d3.event.pageY - 28) + "px");
+}
+
+function handleMouseOut(d, i) {
+  d3.select(this)
+    .attr('d', d3.arc()
+      .innerRadius(RADIUS - 20)
+      .outerRadius(RADIUS)
+    );
+  tooltip.style("visibility", "hidden");
+}
+</script>
