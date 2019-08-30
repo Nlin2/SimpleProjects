@@ -22,6 +22,8 @@ Scrape all the files from the City of Boston Database via Webdriver
 Scrapes all pdf's available in the following link http://www.police.ucsd.edu/docs/reports/CallsandArrests/Calls_and_Arrests.asp
 ### Weather_Underground_Scraper.py
 Gets the hourly recorded data from weather underground between a period of time
+### Wu_Xia_World_Text_Scraper.py
+Scrapes text from https://www.wuxiaworld.com/ novels and inputs it all into a single file
 
 ## Data Visualization
 ### bar.html
